@@ -47,16 +47,24 @@ void GcodeSuite::G12() {
                 objects = parser.ushortval('T', NOZZLE_CLEAN_TRIANGLES);
   const float radius = parser.floatval('R', NOZZLE_CLEAN_CIRCLE_RADIUS);
 
+  const bool seenxyz = parser.seen("XYZ");
+  const uint8_t cleans =  (!seenxyz || parser.boolval('X') ? _BV(X_AXIS) : 0)
+                        | (!seenxyz || parser.boolval('Y') ? _BV(Y_AXIS) : 0)
+                        #if DISABLED(NOZZLE_CLEAN_NO_Z)
+                          | (!seenxyz || parser.boolval('Z') ? _BV(Z_AXIS) : 0)
+                        #endif
+                      ;
+
   #if HAS_LEVELING
     const bool was_enabled = planner.leveling_active;
-    set_bed_leveling_enabled(false);
+    if (clean_z) set_bed_leveling_enabled(false);
   #endif
 
-  Nozzle::clean(pattern, strokes, radius, objects);
+  nozzle.clean(pattern, strokes, radius, objects, cleans);
 
   // Re-enable bed level correction if it had been on
   #if HAS_LEVELING
-    set_bed_leveling_enabled(was_enabled);
+    if (clean_z) set_bed_leveling_enabled(was_enabled);
   #endif
 }
 

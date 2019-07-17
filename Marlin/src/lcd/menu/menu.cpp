@@ -204,6 +204,10 @@ void MarlinUI::goto_screen(screenFunc_t screen, const uint16_t encoder/*=0*/, co
       lcd_z_fade_height = planner.z_fade_height;
     #endif
 
+    #if ENABLED(LCD_SET_PROGRESS_MANUALLY)
+      progress_reset();
+    #endif
+
     #if BOTH(DOUBLECLICK_FOR_Z_BABYSTEPPING, BABYSTEPPING)
       static millis_t doubleclick_expire_ms = 0;
       // Going to menu_main from status screen? Remember first click time.
@@ -448,7 +452,7 @@ bool ui_selection; // = false
 void set_ui_selection(const bool sel) { ui_selection = sel; }
 void do_select_screen(PGM_P const yes, PGM_P const no, selectFunc_t yesFunc, selectFunc_t noFunc, PGM_P const pref, const char * const string/*=nullptr*/, PGM_P const suff/*=nullptr*/) {
   if (ui.encoderPosition) {
-    ui_selection = int16_t(ui.encoderPosition) > 0;
+    ui_selection = ((ENCODERBASE) > 0) == (int16_t(ui.encoderPosition) > 0);
     ui.encoderPosition = 0;
   }
   const bool got_click = ui.use_click();
