@@ -157,7 +157,7 @@ Nozzle nozzle;
    * @param pattern one of the available patterns
    * @param argument depends on the cleaning pattern
    */
-  void Nozzle::clean(const uint8_t &pattern, const uint8_t &strokes, const float &radius, const uint8_t &objects, const bool cleans) {
+  void Nozzle::clean(const uint8_t &pattern, const uint8_t &strokes, const float &radius, const uint8_t &objects, const uint8_t cleans) {
     point_t start = NOZZLE_CLEAN_START_POINT;
     point_t end = NOZZLE_CLEAN_END_POINT;
 
