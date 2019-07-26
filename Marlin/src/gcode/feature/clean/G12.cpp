@@ -56,16 +56,11 @@ void GcodeSuite::G12() {
                       ;
 
   #if HAS_LEVELING
-    const bool was_enabled = planner.leveling_active;
-    if (clean_z) set_bed_leveling_enabled(false);
+    // Disable bed leveling if cleaning Z
+    TEMPORARY_BED_LEVELING_STATE(!TEST(cleans, Z_AXIS) && planner.leveling_active);
   #endif
 
   nozzle.clean(pattern, strokes, radius, objects, cleans);
-
-  // Re-enable bed level correction if it had been on
-  #if HAS_LEVELING
-    if (clean_z) set_bed_leveling_enabled(was_enabled);
-  #endif
 }
 
 #endif // NOZZLE_CLEAN_FEATURE
